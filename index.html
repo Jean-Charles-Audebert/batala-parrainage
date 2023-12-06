@@ -1,24 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>Parrainage au sort</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="controls">
-            <label class="toggle-switch" id="togglePupitre">
-                <input type="checkbox" checked>
-                <span class="slider round"></span>
-                <span>Tenir compte du Pupitre</span>
-            </label>
-            <button type="button" id="drawButton">Parrainage au sort</button>
-        </div>
-        <div class="members-list" id="membersList"></div>
-        <div class="result" id="result"></div>
+      <div class="controls">
+        <label class="toggle-switch" id="togglePupitre">
+          <!-- <input type="checkbox" checked />
+          <span class="slider round"></span>
+          <span>Tenir compte du Pupitre</span> -->
+        </label>
+        <button type="button" id="drawButton">Parrainage au sort</button>
+      </div>
+      <div class="members-list" id="membersList"></div>
+      <!-- <div class="result" id="result"></div> -->
     </div>
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <!-- Contenu du résultat -->
+        <span class="close">&times;</span>
+        <div id="result"></div>
+        <!-- Bouton pour exporter en PDF -->
+       <!--  <button id="exportButton">Exporter en PDF</button> -->
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
     <script src="main.js"></script>
-</body>
+
+  </body>
 </html>

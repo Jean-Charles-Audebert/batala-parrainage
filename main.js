@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Display members in two columns
         displayGroupedMembers(anciensGrouped, 'Anciens', 'left');
         displayGroupedMembers(nouveauxGrouped, 'Nouveaux', 'right');
+
+        console.log("anciensGrouped", anciensGrouped);
+        console.log("nouveauxGrouped", nouveauxGrouped);
     }
 
     // Function to display grouped members with toggle switches
@@ -105,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Check if "tenir compte du pupitre" is activated
         const considerPupitre = togglePupitre.checked;
 
-
         // Perform the draw logic
         const drawResult = considerPupitre
             ? drawWithPupitre(anciens, nouveaux, selectedAnciens, selectedNouveaux)
@@ -113,68 +115,75 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Display the result
         displayResult(drawResult.newMembers, drawResult.parrains);
+
+        // Open the modal
+        openModal();
+    }
+
+    function openModal() {
+        const modal = document.getElementById('myModal');
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('myModal');
+        modal.style.display = 'none';
     }
 
     // Function to perform draw with pupitre consideration
     function drawWithPupitre(anciens, nouveaux, selectedAnciens, selectedNouveaux) {
-    const drawResult = {
-        newMembers: [],
-        parrains: [],
-    };
+        const drawResult = {
+            newMembers: [],
+            parrains: [],
+        };
 
-    // Group les anciens par pupitre
-    const anciensGrouped = groupMembersByPupitre(anciens);
+        // Group les anciens par pupitre
+        const anciensGrouped = groupMembersByPupitre(anciens);
 
-    // Iterate through selectedNouveaux
-    selectedNouveaux.forEach(nouveauName => {
-        // Obtient le pupitre du nouveau
-        const nouveauPupitre = nouveaux.find(nouveau => nouveau.nom === nouveauName).pupitre;
+        // Iterate through selectedNouveaux
+        selectedNouveaux.forEach(nouveauName => {
+            // Obtient le pupitre du nouveau
+            const nouveauPupitre = nouveaux.find(nouveau => nouveau.nom === nouveauName).pupitre;
 
-        // Obtient les anciens disponibles pour le pupitre du nouveau
-        const availableAnciens = anciensGrouped[nouveauPupitre].filter(ancien =>
-            selectedAnciens.includes(ancien.nom)
-        );
+            // Obtient les anciens disponibles pour le pupitre du nouveau
+            const availableAnciens = anciensGrouped[nouveauPupitre].filter(ancien =>
+                selectedAnciens.includes(ancien.nom)
+            );
 
-        // Choisis aléatoirement un ancien parmi les disponibles
-        const randomAncien = getRandomElement(availableAnciens);
+            // Choisis aléatoirement un ancien parmi les disponibles
+            const randomAncien = getRandomElement(availableAnciens);
 
-        // Met à jour le résultat du tirage
-        drawResult.newMembers.push(nouveauName);
-        drawResult.parrains.push(randomAncien ? randomAncien.nom : "Aucun");
-    });
+            // Met à jour le résultat du tirage
+            drawResult.newMembers.push(nouveauName);
+            drawResult.parrains.push(randomAncien ? randomAncien.nom : "Aucun");
+        });
 
-    console.log("drawResult:", drawResult);
+        console.log("drawResult:", drawResult);
 
-    return drawResult;
-}
-
-    
-    
-
+        return drawResult;
+    }
 
     // Function to perform draw without pupitre consideration
-
     function drawWithoutPupitre(anciens, selectedAnciens, nouveaux, selectedNouveaux) {
         const drawResult = {
             newMembers: [],
             parrains: [],
         };
-    
+
         // Iterate through selectedNouveaux
         selectedNouveaux.forEach(nouveauName => {
             // Randomly choose an ancien from selectedAnciens
             const randomAncien = getRandomElement(selectedAnciens);
-    
+
             // Update draw result
             drawResult.newMembers.push(nouveauName);
             drawResult.parrains.push(randomAncien ? randomAncien : "Aucun");
         });
-    
+
         console.log("drawResult:", drawResult);
-    
+
         return drawResult;
     }
-    
 
     // Function to get a random element from an array
     function getRandomElement(array) {
@@ -213,4 +222,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize the application
     displayMembers();
+
+    // Event listener to close the modal
+    const closeModalButton = document.querySelector('.close');
+    closeModalButton.addEventListener('click', closeModal);
+
+    // Event listener for export button click
+    const exportButton = document.getElementById('exportButton');
+    exportButton.addEventListener('click', exportToPDF);
 });
+
+// Fonction pour exporter en PDF
+function exportToPDF() {
+    // Récupérer le contenu du tableau des résultats
+    const tableContent = document.getElementById('result').innerHTML;
+
+    // Initialiser jsPDF
+    const pdf = new jsPDF();
+
+    // Ajouter le contenu du tableau au PDF
+    pdf.text('Résultats du tirage', 10, 10);
+    pdf.fromHTML(tableContent, 10, 20);
+
+    // Sauvegarder le PDF avec un nom de fichier
+    pdf.save('resultats_tirage.pdf');
+}
